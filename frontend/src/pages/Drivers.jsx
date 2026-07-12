@@ -8,7 +8,6 @@ import apiCall from "../api";
 import { MasterAPI } from "../Api.jsx";
 import { METHOD } from "../commons/CommonEnum.js";
 
-
 const columns = [
   {
     key: "full_name",
@@ -55,11 +54,7 @@ const columns = [
     render: (val) => {
       const badgeClass = val ? val.toLowerCase().replace("_", "") : "";
       const displayLabel = val ? val.replace("_", " ") : "";
-      return (
-        <span className={`to-badge ${badgeClass}`}>
-          {displayLabel}
-        </span>
-      );
+      return <span className={`to-badge ${badgeClass}`}>{displayLabel}</span>;
     },
   },
 ];
@@ -117,11 +112,17 @@ const Drivers = () => {
         try {
           const deleteUrl = MasterAPI?.DriversDelete.replace("{id}", driver.id);
           await apiCall(deleteUrl, METHOD?.Delete);
-          setToast({ message: `Driver "${driver.full_name}" removed successfully.`, type: "success" });
+          setToast({
+            message: `Driver "${driver.full_name}" removed successfully.`,
+            type: "success",
+          });
           fetchDrivers();
         } catch (err) {
           console.error("Failed to delete driver on server:", err);
-          setToast({ message: "Failed to delete driver on server.", type: "error" });
+          setToast({
+            message: "Failed to delete driver on server.",
+            type: "error",
+          });
         }
       }
     });
@@ -134,9 +135,8 @@ const Drivers = () => {
     }
   };
 
-  const filteredDrivers = filter === "All" 
-    ? drivers 
-    : drivers.filter(d => d.status === filter);
+  const filteredDrivers =
+    filter === "All" ? drivers : drivers.filter((d) => d.status === filter);
 
   return (
     <div>
@@ -165,40 +165,38 @@ const Drivers = () => {
       <div className="to-stats-bar">
         <div className="to-stats-label">Filter Status</div>
         <div className="to-stats-row">
-          <button 
+          <button
             className={`to-stats-btn ${filter === "All" ? "active" : ""}`}
             onClick={() => setFilter("All")}
           >
             Show All
           </button>
-          <button 
+          <button
             className={`to-stats-btn available ${filter === "AVAILABLE" ? "active" : ""}`}
             onClick={() => setFilter("AVAILABLE")}
           >
             Available
           </button>
-          <button 
+          <button
             className={`to-stats-btn ontrip ${filter === "ON_TRIP" ? "active" : ""}`}
             onClick={() => setFilter("ON_TRIP")}
           >
             On Trip
           </button>
-          <button 
+          <button
             className={`to-stats-btn offduty ${filter === "OFF_DUTY" ? "active" : ""}`}
             onClick={() => setFilter("OFF_DUTY")}
           >
             Off Duty
           </button>
-          <button 
+          <button
             className={`to-stats-btn suspended ${filter === "SUSPENDED" ? "active" : ""}`}
             onClick={() => setFilter("SUSPENDED")}
           >
             Suspended
           </button>
         </div>
-        <div className="to-rules-note">
-          Rule: Expired license or Suspended status → blocked from trip assignment
-        </div>
+        <div className="to-rules-note"></div>
       </div>
 
       {isModalOpen && (
@@ -211,10 +209,10 @@ const Drivers = () => {
       )}
 
       {toast && (
-        <Toast 
-          message={toast.message} 
-          type={toast.type} 
-          onClose={() => setToast(null)} 
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
         />
       )}
     </div>
