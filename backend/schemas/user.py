@@ -31,3 +31,11 @@ class UserResponse(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
+
+class Me(BaseModel):
+    id: UUID
+    full_name: str
+    email: str
+    role: str
+    rights: list[str]
