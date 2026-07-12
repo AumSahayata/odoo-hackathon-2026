@@ -123,7 +123,9 @@ const Fleet = () => {
     try {
       const result = await apiCall(MasterAPI?.VehicleList, METHOD?.Get);
       if (result && Array.isArray(result)) {
-        setVehicles(result || []);
+        setTimeout(() => {
+          setVehicles(result || []);
+        }, 0);
       }
     } catch (error) {
       setToast({

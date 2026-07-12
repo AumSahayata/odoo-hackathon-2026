@@ -53,9 +53,17 @@ export const apiCall = async (
     const response = await api(config);
     return response.data;
   } catch (error) {
-    const message =
-      error.response?.data?.message ||
-      "Connection error. Please check your network and try again.";
+    let message = "Connection error. Please check your network and try again.";
+    const data = error.response?.data;
+    if (data) {
+      if (typeof data.detail === "string") {
+        message = data.detail;
+      } else if (Array.isArray(data.detail)) {
+        message = data.detail.map((d) => d.msg || "Validation error").join(", ");
+      } else if (typeof data.message === "string") {
+        message = data.message;
+      }
+    }
     throw new Error(message, { cause: error });
   }
 };
