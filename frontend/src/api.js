@@ -10,7 +10,7 @@ const getBaseURL = () => {
   if (url) {
     return url.endsWith("/api") ? url : `${url}/api`;
   }
-  return "http://localhost:5000/api";
+  return "http://localhost:8001/api";
 };
 
 const api = axios.create({
