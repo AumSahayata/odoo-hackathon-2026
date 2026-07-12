@@ -23,4 +23,15 @@ export const MasterAPI = {
   VehicleList: baseurl + "/vehicles",
   VehicleUpdate: baseurl + "/vehicles/{id}",
   VehicleDelete: baseurl + "/vehicles/{id}",
+
+  DriversAdd: baseurl + "/drivers",
+  DriversList: baseurl + "/drivers",
+  DriversUpdate: baseurl + "/drivers/{id}",
+  DriversDelete: baseurl + "/drivers/{id}",
+
+  TripsAdd: baseurl + "/trips",
+  TripsList: baseurl + "/trips",
+  TripsCancel: baseurl + "/trips/{id}/cancel",
+  TripsDispatch: baseurl + "/trips/{id}/dispatch",
+  TripsComplete: baseurl + "/trips/{id}/complete",
 };

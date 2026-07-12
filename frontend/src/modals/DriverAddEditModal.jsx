@@ -6,18 +6,21 @@ import { MasterAPI } from "../Api.jsx";
 import { METHOD } from "../commons/CommonEnum.js";
 import Toast from "../components/Toast";
 
-const vehicleTypeOptions = [
-  { value: "TRUCK", label: "Truck" },
-  { value: "VAN", label: "Van" },
-  { value: "CAR", label: "Car" },
-  { value: "MOTORCYCLE", label: "Motorcycle" },
+Modal.setAppElement("#root");
+
+const licenseCategoryOptions = [
+  { value: "MCWOG", label: "MCWOG" },
+  { value: "MCWG", label: "MCWG" },
+  { value: "LMV-NT", label: "LMV-NT" },
+  { value: "LMV-TR", label: "LMV-TR" },
+  { value: "HMV", label: "HMV" },
 ];
 
 const statusOptions = [
   { value: "AVAILABLE", label: "Available" },
   { value: "ON_TRIP", label: "On Trip" },
-  { value: "IN_SHOP", label: "In Shop" },
-  { value: "RETIRED", label: "Retired" },
+  { value: "OFF_DUTY", label: "Off Duty" },
+  { value: "SUSPENDED", label: "Suspended" },
 ];
 
 const customSelectStyles = {
@@ -78,185 +81,156 @@ const customSelectStyles = {
   }),
 };
 
-const FleetAddEditModal = ({
-  isModalOpen,
-  setIsModalOpen,
-  vehicleToEdit,
-  onSave,
-}) => {
+const DriverAddEditModal = ({ isModalOpen, setIsModalOpen, driverToEdit, onSave }) => {
   const [toast, setToast] = useState(null);
-  const [prevVehicleToEdit, setPrevVehicleToEdit] = useState(null);
-  const [newVehicle, setNewVehicle] = useState({
-    registration_number: "",
-    model_name: "",
-    type: "Heavy Bus",
-    max_load_capacity: "",
-    odometer: "",
-    acquisition_cost: "",
-    current_location: "",
-    status: "Available",
+  const [prevDriverToEdit, setPrevDriverToEdit] = useState(null);
+  const [newDriver, setNewDriver] = useState({
+    full_name: "",
+    license_number: "",
+    license_category: "LMV-NT",
+    license_expiry_date: "",
+    contact_number: "",
+    safety_score: "100",
+    status: "AVAILABLE",
   });
 
-  if (vehicleToEdit !== prevVehicleToEdit) {
-    setPrevVehicleToEdit(vehicleToEdit);
-    setNewVehicle(
-      vehicleToEdit
+  if (driverToEdit !== prevDriverToEdit) {
+    setPrevDriverToEdit(driverToEdit);
+    setNewDriver(
+      driverToEdit
         ? {
-            registration_number: vehicleToEdit.registration_number || "",
-            model_name: vehicleToEdit.model_name || "",
-            type: vehicleToEdit.type || "Heavy Bus",
-            max_load_capacity: vehicleToEdit.max_load_capacity || "",
-            odometer: vehicleToEdit.odometer || "",
-            acquisition_cost: vehicleToEdit.acquisition_cost || "",
-            current_location: vehicleToEdit.current_location || "",
-            status: vehicleToEdit.status || "Available",
+            full_name: driverToEdit.full_name || "",
+            license_number: driverToEdit.license_number || "",
+            license_category: driverToEdit.license_category || "LMV-NT",
+            license_expiry_date: driverToEdit.license_expiry_date || "",
+            contact_number: driverToEdit.contact_number || "",
+            safety_score: String(driverToEdit.safety_score ?? "100"),
+            status: driverToEdit.status || "AVAILABLE",
           }
         : {
-            registration_number: "",
-            model_name: "",
-            type: "Heavy Bus",
-            max_load_capacity: "",
-            odometer: "",
-            acquisition_cost: "",
-            current_location: "",
-            status: "Available",
-          },
+            full_name: "",
+            license_number: "",
+            license_category: "LMV-NT",
+            license_expiry_date: "",
+            contact_number: "",
+            safety_score: "100",
+            status: "AVAILABLE",
+          }
     );
   }
 
   const handleClearForm = () => {
-    setNewVehicle({
-      registration_number: "",
-      model_name: "",
-      type: "Heavy Bus",
-      max_load_capacity: "",
-      odometer: "",
-      acquisition_cost: "",
-      current_location: "",
-      status: "Available",
+    setNewDriver({
+      full_name: "",
+      license_number: "",
+      license_category: "LMV-NT",
+      license_expiry_date: "",
+      contact_number: "",
+      safety_score: "100",
+      status: "AVAILABLE",
     });
   };
 
-  const handleAddVehicle = async (e) => {
+  const handleAddDriver = async (e) => {
     if (e) e.preventDefault();
 
-    const regNum = newVehicle?.registration_number.trim();
-    if (regNum.length < 3 || regNum.length > 50) {
+    const fullName = newDriver.full_name.trim();
+    if (fullName.length < 2 || fullName.length > 100) {
       setToast({
-        message: "Registration number must be between 3 and 50 characters.",
+        message: "Driver name must be between 2 and 100 characters.",
         type: "error",
       });
       return;
     }
 
-    const modelName = newVehicle?.model_name.trim();
-    if (modelName.length < 2 || modelName.length > 100) {
+    const licenseNumber = newDriver.license_number.trim();
+    if (!licenseNumber) {
+      setToast({ message: "License number is required.", type: "error" });
+      return;
+    }
+
+    const expiryDate = newDriver.license_expiry_date;
+    if (!expiryDate) {
+      setToast({ message: "License expiry date is required.", type: "error" });
+      return;
+    }
+
+    const contactNumber = newDriver.contact_number.trim();
+    if (!contactNumber) {
+      setToast({ message: "Contact number is required.", type: "error" });
+      return;
+    }
+
+    const score = parseFloat(newDriver.safety_score);
+    if (isNaN(score) || score < 0 || score > 100) {
       setToast({
-        message: "Model name must be between 2 and 100 characters.",
+        message: "Safety score must be a decimal between 0 and 100.",
         type: "error",
       });
       return;
     }
 
-    const loadCapacity = parseInt(newVehicle?.max_load_capacity);
-    if (isNaN(loadCapacity) || loadCapacity <= 0) {
-      setToast({
-        message: "Max load capacity must be greater than 0.",
-        type: "error",
-      });
-      return;
-    }
-
-    const odoValue = parseInt(newVehicle?.odometer);
-    if (isNaN(odoValue) || odoValue < 0) {
-      setToast({
-        message: "Odometer must be greater than or equal to 0.",
-        type: "error",
-      });
-      return;
-    }
-
-    const acqCost = parseFloat(newVehicle?.acquisition_cost);
-    if (isNaN(acqCost) || acqCost <= 0) {
-      setToast({
-        message: "Acquisition cost must be greater than 0.",
-        type: "error",
-      });
-      return;
-    }
-
-    const loc = newVehicle?.current_location.trim();
-    if (!loc) {
-      setToast({ message: "Current location is required.", type: "error" });
-      return;
-    }
-
-    const createdVehicle = {
-      id: vehicleToEdit ? vehicleToEdit.id : Date.now(), // retain original ID if editing
-      registration_number: regNum,
-      model_name: modelName,
-      type: newVehicle.type,
-      max_load_capacity: loadCapacity,
-      odometer: odoValue,
-      acquisition_cost: acqCost,
-      current_location: loc,
-      status: newVehicle.status,
+    const createdDriver = {
+      id: driverToEdit ? driverToEdit.id : Date.now(),
+      full_name: fullName,
+      license_number: licenseNumber,
+      license_category: newDriver.license_category,
+      license_expiry_date: expiryDate,
+      contact_number: contactNumber,
+      safety_score: score,
+      status: newDriver.status,
     };
 
-    if (onSave) {
-      onSave(createdVehicle);
-    }
-
     try {
-      const url = vehicleToEdit
-        ? MasterAPI?.VehicleUpdate.replace("{id}", vehicleToEdit.id)
-        : MasterAPI?.VehicleAdd;
+      const url = driverToEdit
+        ? MasterAPI?.DriversUpdate.replace("{id}", driverToEdit.id)
+        : MasterAPI?.DriversAdd;
 
       const payload = {};
-      if (vehicleToEdit) {
-        if (regNum !== vehicleToEdit.registration_number) {
-          payload.registration_number = regNum;
+      if (driverToEdit) {
+        if (fullName !== driverToEdit.full_name) {
+          payload.full_name = fullName;
         }
-        if (modelName !== vehicleToEdit.model_name) {
-          payload.model_name = modelName;
+        if (licenseNumber !== driverToEdit.license_number) {
+          payload.license_number = licenseNumber;
         }
-        if (newVehicle.type !== vehicleToEdit.type) {
-          payload.type = newVehicle.type;
+        if (newDriver.license_category !== driverToEdit.license_category) {
+          payload.license_category = newDriver.license_category;
         }
-        if (loadCapacity !== vehicleToEdit.max_load_capacity) {
-          payload.max_load_capacity = loadCapacity;
+        if (expiryDate !== driverToEdit.license_expiry_date) {
+          payload.license_expiry_date = expiryDate;
         }
-        if (odoValue !== vehicleToEdit.odometer) {
-          payload.odometer = odoValue;
+        if (contactNumber !== driverToEdit.contact_number) {
+          payload.contact_number = contactNumber;
         }
-        if (acqCost !== vehicleToEdit.acquisition_cost) {
-          payload.acquisition_cost = acqCost;
+        if (score !== driverToEdit.safety_score) {
+          payload.safety_score = score;
         }
-        if (loc !== vehicleToEdit.current_location) {
-          payload.current_location = loc;
-        }
-        if (newVehicle.status !== vehicleToEdit.status) {
-          payload.status = newVehicle.status;
+        if (newDriver.status !== driverToEdit.status) {
+          payload.status = newDriver.status;
         }
       } else {
-        Object.assign(payload, createdVehicle);
+        Object.assign(payload, createdDriver);
+        delete payload.id;
       }
 
       await apiCall(
         url,
-        vehicleToEdit ? METHOD?.Patch : METHOD?.Post,
-        payload,
+        driverToEdit ? METHOD?.Patch : METHOD?.Post,
+        payload
       );
-      setToast({
-        message: vehicleToEdit
-          ? `Vehicle "${modelName}" successfully updated.`
-          : `Vehicle "${modelName}" successfully added to inventory.`,
-        type: "success",
-      });
+
+      if (onSave) {
+        onSave(
+          driverToEdit
+            ? `Driver "${fullName}" successfully updated.`
+            : `Driver "${fullName}" successfully registered.`
+        );
+      }
       setIsModalOpen(false);
     } catch (error) {
       console.error(error);
-      setToast({ message: error?.message || "Failed to save vehicle.", type: "error" });
+      setToast({ message: error?.message || "Failed to save driver.", type: "error" });
     }
   };
 
@@ -265,11 +239,11 @@ const FleetAddEditModal = ({
       <Modal
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}
-        contentLabel="Add New Vehicle"
+        contentLabel="Add New Operator"
       >
         <div className="to-modal-header">
           <h3 className="to-modal-header-title">
-            {vehicleToEdit ? "Edit Vehicle" : "Vehicle Master"}
+            {driverToEdit ? "Edit Operator" : "Driver Master"}
           </h3>
           <div className="to-modal-header-actions">
             <button
@@ -295,23 +269,23 @@ const FleetAddEditModal = ({
         </div>
 
         <div className="to-modal-body">
-          <form onSubmit={handleAddVehicle}>
+          <form onSubmit={handleAddDriver}>
             <div className="to-master-form-grid">
               <div className="to-master-field-row">
                 <label className="to-master-label">
-                  Reg. Number<span>*</span>
+                  Driver Name<span>*</span>
                 </label>
                 <div className="to-master-input-wrap">
                   <input
                     type="text"
                     className="to-input"
-                    placeholder="e.g. MH-12-PQ-8834"
+                    placeholder="e.g. Alex"
                     required
-                    value={newVehicle?.registration_number}
+                    value={newDriver?.full_name}
                     onChange={(e) =>
-                      setNewVehicle({
-                        ...newVehicle,
-                        registration_number: e.target.value,
+                      setNewDriver({
+                        ...newDriver,
+                        full_name: e.target.value,
                       })
                     }
                   />
@@ -320,19 +294,19 @@ const FleetAddEditModal = ({
 
               <div className="to-master-field-row">
                 <label className="to-master-label">
-                  Model Name<span>*</span>
+                  License Number<span>*</span>
                 </label>
                 <div className="to-master-input-wrap">
                   <input
                     type="text"
                     className="to-input"
-                    placeholder="e.g. Tata Starbus 40"
+                    placeholder="e.g. DL-XXXXX"
                     required
-                    value={newVehicle?.model_name}
+                    value={newDriver?.license_number}
                     onChange={(e) =>
-                      setNewVehicle({
-                        ...newVehicle,
-                        model_name: e.target.value,
+                      setNewDriver({
+                        ...newDriver,
+                        license_number: e.target.value,
                       })
                     }
                   />
@@ -343,37 +317,32 @@ const FleetAddEditModal = ({
             <div className="to-master-form-grid">
               <div className="to-master-field-row">
                 <label className="to-master-label">
-                  Vehicle Type<span>*</span>
+                  Category<span>*</span>
                 </label>
                 <div className="to-master-input-wrap">
                   <Select
-                    options={vehicleTypeOptions}
+                    options={licenseCategoryOptions}
                     styles={customSelectStyles}
-                    value={vehicleTypeOptions.find(
-                      (opt) => opt.value === newVehicle.type,
-                    )}
-                    onChange={(val) =>
-                      setNewVehicle({ ...newVehicle, type: val.value })
-                    }
+                    value={licenseCategoryOptions.find((opt) => opt.value === newDriver.license_category)}
+                    onChange={(val) => setNewDriver({ ...newDriver, license_category: val.value })}
                   />
                 </div>
               </div>
 
               <div className="to-master-field-row">
                 <label className="to-master-label">
-                  Max Load (kg)<span>*</span>
+                  Expiry Date<span>*</span>
                 </label>
                 <div className="to-master-input-wrap">
                   <input
-                    type="number"
+                    type="date"
                     className="to-input"
-                    placeholder="e.g. 4500"
                     required
-                    value={newVehicle.max_load_capacity}
+                    value={newDriver.license_expiry_date}
                     onChange={(e) =>
-                      setNewVehicle({
-                        ...newVehicle,
-                        max_load_capacity: e.target.value,
+                      setNewDriver({
+                        ...newDriver,
+                        license_expiry_date: e.target.value,
                       })
                     }
                   />
@@ -384,17 +353,17 @@ const FleetAddEditModal = ({
             <div className="to-master-form-grid">
               <div className="to-master-field-row">
                 <label className="to-master-label">
-                  Odometer (km)<span>*</span>
+                  Contact Number<span>*</span>
                 </label>
                 <div className="to-master-input-wrap">
                   <input
-                    type="number"
+                    type="text"
                     className="to-input"
-                    placeholder="e.g. 45200"
+                    placeholder="e.g. 98765xxxxx"
                     required
-                    value={newVehicle.odometer}
+                    value={newDriver.contact_number}
                     onChange={(e) =>
-                      setNewVehicle({ ...newVehicle, odometer: e.target.value })
+                      setNewDriver({ ...newDriver, contact_number: e.target.value })
                     }
                   />
                 </div>
@@ -402,20 +371,22 @@ const FleetAddEditModal = ({
 
               <div className="to-master-field-row">
                 <label className="to-master-label">
-                  Acq. Cost ($)<span>*</span>
+                  Safety Score (0-100)<span>*</span>
                 </label>
                 <div className="to-master-input-wrap">
                   <input
                     type="number"
-                    step="0.01"
+                    min="0"
+                    max="100"
+                    step="1"
                     className="to-input"
-                    placeholder="e.g. 32000.00"
+                    placeholder="e.g. 100"
                     required
-                    value={newVehicle.acquisition_cost}
+                    value={newDriver.safety_score}
                     onChange={(e) =>
-                      setNewVehicle({
-                        ...newVehicle,
-                        acquisition_cost: e.target.value,
+                      setNewDriver({
+                        ...newDriver,
+                        safety_score: e.target.value,
                       })
                     }
                   />
@@ -427,39 +398,14 @@ const FleetAddEditModal = ({
 
             <div className="to-master-full-row">
               <label className="to-master-label">
-                Current Location<span>*</span>
-              </label>
-              <div className="to-master-input-wrap">
-                <input
-                  type="text"
-                  className="to-input"
-                  placeholder="e.g. Pune Depot A"
-                  required
-                  value={newVehicle.current_location}
-                  onChange={(e) =>
-                    setNewVehicle({
-                      ...newVehicle,
-                      current_location: e.target.value,
-                    })
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="to-master-full-row">
-              <label className="to-master-label">
                 Initial Status<span>*</span>
               </label>
               <div className="to-master-input-wrap">
                 <Select
                   options={statusOptions}
                   styles={customSelectStyles}
-                  value={statusOptions.find(
-                    (opt) => opt.value === newVehicle.status,
-                  )}
-                  onChange={(val) =>
-                    setNewVehicle({ ...newVehicle, status: val.value })
-                  }
+                  value={statusOptions.find((opt) => opt.value === newDriver.status)}
+                  onChange={(val) => setNewDriver({ ...newDriver, status: val.value })}
                 />
               </div>
             </div>
@@ -544,4 +490,4 @@ const FleetAddEditModal = ({
   );
 };
 
-export default FleetAddEditModal;
+export default DriverAddEditModal;
