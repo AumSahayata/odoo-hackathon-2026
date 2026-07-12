@@ -1,8 +1,10 @@
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
+from services.reports import export_vehicles_excel
 from core.dependencies import get_current_user, require_roles
 from db.database import get_db
 from models.user import User, UserRole
@@ -19,6 +21,28 @@ router = APIRouter(
     prefix="/vehicles",
     tags=["Vehicles"],
 )
+
+
+@router.get("/excel")
+def export_vehicle_report(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(
+        require_roles(
+            UserRole.ADMIN,
+            UserRole.FINANCIAL_ANALYST,
+            UserRole.FLEET_MANAGER,
+        )
+    ),
+):
+    buffer = export_vehicles_excel(db)
+
+    return StreamingResponse(
+        buffer,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={
+            "Content-Disposition": 'attachment; filename="vehicles.xlsx"'
+        },
+    )
 
 
 @router.post(
