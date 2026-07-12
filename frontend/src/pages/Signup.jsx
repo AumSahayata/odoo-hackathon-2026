@@ -11,15 +11,16 @@ const roles = [
   { name: "Financial Analyst", scope: "Fuel & Expenses · Analytics" },
 ];
 
-const Login = () => {
+const Signup = () => {
   const [showPass, setShowPass] = useState(false);
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [remember, setRemember] = useState(true);
   const [role, setRole] = useState("Dispatcher");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login, isAuthenticated } = useAuth();
+  const [confirmPassword, setConfirmPassword] = useState("");
+  
+  const { register, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,20 +31,24 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
+    if (!email || !password || !confirmPassword) {
       setToast({ message: "Please fill in all fields.", type: "error" });
+      return;
+    }
+    if (password !== confirmPassword) {
+      setToast({ message: "Passwords do not match.", type: "error" });
       return;
     }
     setLoading(true);
     try {
-      await login(email, password, role);
-      setToast({ message: "Login successful! Redirecting...", type: "success" });
+      await register(email, password, role);
+      setToast({ message: "Account created successfully! Redirecting to login...", type: "success" });
       setTimeout(() => {
-        navigate("/home");
-      }, 1000);
+        navigate("/");
+      }, 1500);
     } catch (error) {
       setToast({
-        message: error.message || "Invalid credentials. Try again.",
+        message: error.message || "Registration failed. Try again.",
         type: "error",
       });
     } finally {
@@ -91,7 +96,7 @@ const Login = () => {
         <div className="to-brand-tag">Smart Transport Operations Platform</div>
 
         <div className="to-role-block">
-          <div className="to-role-eyebrow">One login, four roles</div>
+          <div className="to-role-eyebrow">Choose your operational role</div>
           {roles.map((r) => (
             <div
               key={r.name}
@@ -114,11 +119,11 @@ const Login = () => {
       <main className="to-auth">
         <div className="to-auth-card">
           <span className="to-session-chip mono">
-            <span className="to-session-dot"></span> Session · Ambitious Cobra
+            <span className="to-session-dot"></span> Account · Registration
           </span>
 
-          <div className="to-auth-title">Sign in to your account</div>
-          <div className="to-auth-sub">Enter your credentials to continue.</div>
+          <div className="to-auth-title">Create your account</div>
+          <div className="to-auth-sub">Register to access the platform.</div>
 
           <form onSubmit={handleSubmit}>
             <div className="to-field">
@@ -129,10 +134,11 @@ const Login = () => {
                 id="email"
                 type="email"
                 className="to-input"
-                placeholder="Enter your email"
-                autoComplete="username"
+                placeholder="raven.k@transitops.in"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
               />
             </div>
 
@@ -146,9 +152,10 @@ const Login = () => {
                   type={showPass ? "text" : "password"}
                   className="to-input"
                   placeholder="••••••••"
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  disabled={loading}
                 />
                 <button
                   type="button"
@@ -161,6 +168,22 @@ const Login = () => {
             </div>
 
             <div className="to-field">
+              <label className="to-field-label" htmlFor="confirmPassword">
+                Confirm Password
+              </label>
+              <input
+                id="confirmPassword"
+                type={showPass ? "text" : "password"}
+                className="to-input"
+                placeholder="••••••••"
+                autoComplete="new-password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                disabled={loading}
+              />
+            </div>
+
+            <div className="to-field">
               <label className="to-field-label" htmlFor="role">
                 Role (RBAC)
               </label>
@@ -169,6 +192,7 @@ const Login = () => {
                 className="to-select"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
+                disabled={loading}
               >
                 {roles.map((r) => (
                   <option key={r.name} value={r.name}>
@@ -178,45 +202,17 @@ const Login = () => {
               </select>
             </div>
 
-            <div className="to-check-row">
-              <label className="to-check-label">
-                <input
-                  type="checkbox"
-                  checked={remember}
-                  onChange={(e) => setRemember(e.target.checked)}
-                  className="to-checkbox"
-                />
-                Remember me
-              </label>
-              <a href="#" className="to-forgot-link">
-                Forgot password?
-              </a>
-            </div>
-
-            <button type="submit" className="to-signin-btn" disabled={loading}>
-              {loading ? "Signing In..." : "Sign In"}
+            <button type="submit" className="to-signin-btn" style={{ marginTop: "0.25rem" }} disabled={loading}>
+              {loading ? "Registering..." : "Sign Up"}
             </button>
           </form>
 
           <div style={{ marginTop: "1rem", textAlign: "center", fontSize: "0.85rem", color: "var(--text-mid)" }}>
-            Don't have an account?{" "}
-            <Link to="/signup" className="to-forgot-link">
-              Sign Up
+            Already have an account?{" "}
+            <Link to="/" className="to-forgot-link">
+              Sign In
             </Link>
           </div>
-
-          <button
-            className="to-demo-toggle mono"
-            onClick={() =>
-              setToast({
-                message: "Demo Error: Invalid credentials. Account locked after 5 failed attempts.",
-                type: "error",
-              })
-            }
-            type="button"
-          >
-            TRIGGER DEMO ERROR TOAST
-          </button>
         </div>
       </main>
 
@@ -231,4 +227,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
