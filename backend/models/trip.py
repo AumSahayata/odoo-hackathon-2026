@@ -15,7 +15,6 @@ class TripStatus(str, Enum):
     CANCELLED = "CANCELLED"
 
 
-
 class Trip(BaseModel):
     __tablename__ = "trips"
 

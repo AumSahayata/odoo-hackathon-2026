@@ -2,7 +2,6 @@ from datetime import date
 from decimal import Decimal
 
 from sqlalchemy import Date, Enum as SQLEnum, ForeignKey, Numeric, String
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from enum import Enum
