@@ -1,19 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../redux/userSlice";
+import apiCall from "../api";
+import { METHOD } from "../commons/CommonEnum";
+import { AuthApi } from "../Api.jsx";
 const DashboardLayout = () => {
-  const { user } = useAuth();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.user);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  const username = user?.email
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await apiCall(AuthApi?.getUser, METHOD?.Get);
+        dispatch(setUser(response));
+      } catch (err) {
+        console.error("Failed to fetch user data:", err);
+      }
+    };
+    fetchUser();
+  }, [dispatch]);
+
+  const username = user?.full_name || (user?.email
     ? user.email
         .split("@")[0]
         .split(".")[0]
         .replace(/^\w/, (c) => c.toUpperCase())
-    : "Sahil M.";
-  const userRole = user?.role || "Dispatcher";
+    : "Loading...");
+  const userRole = user?.role || "Loading...";
   const initials = username
     .split(" ")
     .map((n) => n[0])
@@ -187,7 +203,22 @@ const DashboardLayout = () => {
         </div>
 
         <nav className="to-sidebar-menu">
-          {menuItems.map((item) => (
+          {menuItems.filter(item => {
+            if (!user || !user.rights) return false;
+            if (user.role === 'ADMIN') return true;
+            const r = user.rights;
+            switch (item.name) {
+              case "Dashboard": return r.includes("Dashboard");
+              case "Fleet": return r.includes("Vehicles");
+              case "Drivers": return r.includes("Drivers");
+              case "Trips": return r.includes("Trips");
+              case "Maintenance": return r.includes("Maintenance");
+              case "Fuel & Expenses": return r.includes("Fuel") || r.includes("Expenses");
+              case "Analytics": return r.includes("Reports");
+              case "Settings": return r.includes("User Management");
+              default: return false;
+            }
+          }).map((item) => (
             <NavLink
               key={item.name}
               to={item.path}

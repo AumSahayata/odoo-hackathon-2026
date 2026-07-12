@@ -16,9 +16,14 @@ const baseurl = getBaseURL();
 export const AuthApi = {
   Login: baseurl + "/auth/login",
   Signup: baseurl + "/auth/register",
+
+  getUser: baseurl + "/auth/me",
 };
 
 export const MasterAPI = {
+
+  Dashboard: baseurl + "/dashboard",
+
   VehicleAdd: baseurl + "/vehicles",
   VehicleList: baseurl + "/vehicles",
   VehicleUpdate: baseurl + "/vehicles/{id}",
