@@ -9,15 +9,10 @@ from models.vehicle import VehicleStatus, VehicleType
 class VehicleCreate(BaseModel):
     registration_number: str = Field(min_length=3, max_length=50)
     model_name: str = Field(min_length=2, max_length=100)
-
     type: VehicleType
-
     max_load_capacity: int = Field(gt=0)
-
     odometer: int = Field(ge=0)
-
     acquisition_cost: Decimal = Field(gt=0)
-
     current_location: str
 
 
@@ -37,19 +32,11 @@ class VehicleResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
-
     registration_number: str
-
     model_name: str
-
     type: VehicleType
-
     max_load_capacity: int
-
     odometer: int
-
     acquisition_cost: Decimal
-
     status: VehicleStatus
-
     current_location: str

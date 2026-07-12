@@ -3,40 +3,40 @@ from uuid import UUID
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from schemas.driver import DriverCreate, DriverResponse, DriverUpdate
 from core.dependencies import get_current_user, require_roles
 from db.database import get_db
 from models.user import User, UserRole
-from services.vehicle import (
-    create_vehicle,
-    delete_vehicle,
-    get_vehicle,
-    get_vehicles,
-    update_vehicle,
+from services.driver import (
+    create_driver,
+    delete_driver,
+    get_driver,
+    get_drivers,
+    update_driver,
 )
-from schemas.vehicle import VehicleCreate, VehicleResponse, VehicleUpdate
 
 router = APIRouter(
-    prefix="/vehicles",
-    tags=["Vehicles"],
+    prefix="/drivers",
+    tags=["drivers"],
 )
 
 
 @router.post(
     "",
-    response_model=VehicleResponse,
+    response_model=DriverResponse,
     status_code=201,
 )
 def create(
-    vehicle: VehicleCreate,
+    driver: DriverCreate,
     current_user: User = Depends(require_roles(UserRole.ADMIN, UserRole.FLEET_MANAGER)),
     db: Session = Depends(get_db),
 ):
-    return create_vehicle(vehicle, db)
+    return create_driver(driver, db)
 
 
 @router.get(
     "",
-    response_model=list[VehicleResponse],
+    response_model=list[DriverResponse],
 )
 def list_all(
     skip: int = 0,
@@ -44,52 +44,50 @@ def list_all(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return get_vehicles(db, skip, limit)
+    return get_drivers(db, skip, limit)
 
 
 @router.get(
-    "/{vehicle_id}",
-    response_model=VehicleResponse,
+    "/{driver_id}",
+    response_model=DriverResponse,
 )
 def get(
-    vehicle_id: UUID,
+    driver_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return get_vehicle(vehicle_id, db)
+    return get_driver(driver_id, db)
 
 
 @router.patch(
-    "/{vehicle_id}",
-    response_model=VehicleResponse,
+    "/{driver_id}",
+    response_model=DriverResponse,
 )
 def update(
-    vehicle_id: UUID,
-    vehicle: VehicleUpdate,
+    driver_id: UUID,
+    driver: DriverUpdate,
     db: Session = Depends(get_db),
     current_user: User = Depends(
         require_roles(
             UserRole.ADMIN,
             UserRole.FLEET_MANAGER,
+            UserRole.SAFETY_OFFICER,
         )
     ),
 ):
-    return update_vehicle(
-        vehicle_id,
-        vehicle,
+    return update_driver(
+        driver_id,
+        driver,
         db,
     )
 
 
-from fastapi import status
-
-
 @router.delete(
-    "/{vehicle_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
+    "/{driver_id}",
+    status_code=204,
 )
 def delete(
-    vehicle_id: UUID,
+    driver_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(
         require_roles(
@@ -98,4 +96,4 @@ def delete(
         )
     ),
 ):
-    delete_vehicle(vehicle_id, db)
+    delete_driver(driver_id, db)
