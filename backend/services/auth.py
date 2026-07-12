@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from models.user import User
-from schemas.user import UserCreate, UserLogin
+from schemas.user import Me, UserCreate, UserLogin
 from core.security import (
     hash_password,
     verify_password,
@@ -71,3 +71,38 @@ def authenticate_user(
         "access_token": token,
         "token_type": "bearer",
     }
+
+
+def get_role_rights(role: str) -> list[str]:
+    rights_map = {
+        "ADMIN": [
+            "Dashboard",
+            "Vehicles",
+            "Drivers",
+            "Trips",
+            "Maintenance",
+            "Fuel",
+            "Expenses",
+            "Reports",
+            "User Management",
+        ],
+        "FLEET_MANAGER": ["Dashboard", "Vehicles", "Drivers", "Trips"],
+        "SAFETY_OFFICER": ["Dashboard", "Drivers", "Maintenance"],
+        "FINANCIAL_ANALYST": ["Dashboard", "Fuel", "Expenses", "Reports"],
+    }
+
+    return rights_map.get(role, [])
+
+
+def get_me(user: User, db: Session) -> Me:
+    rights = get_role_rights(user.role)
+
+    me = Me(
+        id=user.id,
+        email=user.email,
+        full_name=user.full_name,
+        role=user.role,
+        rights=rights,
+    )
+    
+    return me
