@@ -28,7 +28,7 @@ router = APIRouter(
 )
 def create(
     driver: DriverCreate,
-    current_user: User = Depends(require_roles(UserRole.ADMIN, UserRole.FLEET_MANAGER)),
+    current_user: User = Depends(require_roles(UserRole.ADMIN, UserRole.FLEET_MANAGER, UserRole.SAFETY_OFFICER)),
     db: Session = Depends(get_db),
 ):
     return create_driver(driver, db)
@@ -93,6 +93,7 @@ def delete(
         require_roles(
             UserRole.ADMIN,
             UserRole.FLEET_MANAGER,
+            UserRole.SAFETY_OFFICER
         )
     ),
 ):
