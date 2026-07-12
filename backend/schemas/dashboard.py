@@ -1,4 +1,4 @@
-from decimal import Decimal
+from typing import Dict, List
 
 from pydantic import BaseModel
 
@@ -29,4 +29,4 @@ class DashboardResponse(BaseModel):
     drivers: DriverStats
     trips: TripStats
     fleet_health: int
-    alerts: list[str]
+    alerts: List[Dict[str, str]]
