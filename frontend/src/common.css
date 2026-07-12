@@ -1263,3 +1263,344 @@
     height: 44px;
   }
 }
+
+/* ============ REACT MODAL & CUSTOM MASTER VIEW STYLES ============ */
+.ReactModal__Overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75) !important;
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.ReactModal__Content {
+  position: relative !important;
+  inset: auto !important;
+  background: #111419 !important;
+  border: 1px solid var(--border-dark) !important;
+  border-radius: 12px !important;
+  padding: 0 !important;
+  width: 100%;
+  max-width: 900px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-hi);
+  max-height: 90vh !important; /* Cap height to 90% viewport */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden !important;
+  animation: modalFadeIn 0.25s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.to-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1E293B; /* Solid premium header background matching Odoo/ERP style */
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.to-modal-header-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.to-modal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.to-modal-header-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.to-modal-header-btn:hover {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.to-modal-header-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.to-modal-body {
+  padding: 1.5rem;
+  overflow-y: auto !important; /* Enable scrolling for form fields if they exceed height */
+  flex-grow: 1;
+}
+
+/* Master style form rows grid */
+.to-master-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.to-master-field-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.to-master-label {
+  width: 150px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-mid);
+  text-align: left;
+  flex-shrink: 0;
+}
+
+.to-master-label span {
+  color: #EF4444; /* red asterisks */
+  margin-left: 0.15rem;
+}
+
+.to-master-input-wrap {
+  flex-grow: 1;
+  display: flex;
+}
+
+.to-master-input-wrap .to-input,
+.to-master-input-wrap .to-select {
+  width: 100%;
+}
+
+.to-master-full-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.to-master-divider {
+  height: 1px;
+  background: var(--border-dark);
+  margin: 1.25rem 0;
+}
+
+/* Footer & Buttons */
+.to-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-dark);
+  background: rgba(10, 13, 16, 0.3);
+}
+
+.to-modal-footer-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: none;
+}
+
+/* Green Save */
+.to-modal-footer-btn.save {
+  color: #10B981;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.04);
+}
+
+.to-modal-footer-btn.save:hover {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: #10B981;
+}
+
+/* Orange Clear */
+.to-modal-footer-btn.clear {
+  color: #F59E0B;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.04);
+}
+
+.to-modal-footer-btn.clear:hover {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: #F59E0B;
+}
+
+/* Red Close */
+.to-modal-footer-btn.close {
+  color: #EF4444;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.04);
+}
+
+.to-modal-footer-btn.close:hover {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: #EF4444;
+}
+
+.to-modal-footer-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+@media (max-width: 768px) {
+  .ReactModal__Content {
+    max-width: 95% !important;
+    margin: 1rem !important;
+  }
+  
+  .to-master-form-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem 0;
+  }
+  
+  .to-master-field-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+  }
+  
+  .to-master-label {
+    width: auto;
+  }
+  
+  .to-master-full-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+  }
+  
+  .to-modal-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .to-modal-footer-btn {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+/* Grid theme table styling (spreadsheet look) */
+.to-table.grid-theme {
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid var(--border-dark);
+}
+
+.to-table.grid-theme th {
+  padding: 0.55rem 0.75rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  color: var(--text-hi);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-dark);
+  letter-spacing: normal;
+}
+
+.to-table.grid-theme td {
+  padding: 0.55rem 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-mid);
+  border: 1px solid var(--border-dark);
+  background: transparent;
+}
+
+.to-table.grid-theme tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-hi);
+}
+
+.to-action-delete-btn {
+  background: none;
+  border: none;
+  color: #EF4444;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.to-action-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: #F87171;
+}
+
+.to-action-delete-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* SweetAlert2 dark theme styling overrides */
+.to-swal-popup {
+  background: #111419 !important;
+  border: 1px solid var(--border-dark) !important;
+  border-radius: 16px !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.to-swal-popup .swal2-title {
+  color: var(--text-hi) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+}
+
+.to-swal-popup .swal2-html-container {
+  color: var(--text-mid) !important;
+}
+
+.to-swal-popup .swal2-actions {
+  gap: 0.75rem;
+}
+
+.to-swal-popup .swal2-confirm {
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  font-size: 0.88rem !important;
+  padding: 0.55rem 1.25rem !important;
+}
+
+.to-swal-popup .swal2-cancel {
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  font-size: 0.88rem !important;
+  padding: 0.55rem 1.25rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background-color: transparent !important;
+  color: var(--text-mid) !important;
+}
+
+.to-swal-popup .swal2-cancel:hover {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+  color: var(--text-hi) !important;
+}

@@ -17,3 +17,10 @@ export const AuthApi = {
   Login: baseurl + "/auth/login",
   Signup: baseurl + "/auth/register",
 };
+
+export const MasterAPI = {
+  VehicleAdd: baseurl + "/vehicles",
+  VehicleList: baseurl + "/vehicles",
+  VehicleUpdate: baseurl + "/vehicles/{id}",
+  VehicleDelete: baseurl + "/vehicles/{id}",
+};

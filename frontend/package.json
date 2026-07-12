@@ -15,9 +15,11 @@
     "bootstrap": "^5.3.8",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "react-modal": "^3.16.3",
     "react-redux": "^9.3.0",
     "react-router-dom": "^7.18.1",
-    "react-select": "^5.10.2"
+    "react-select": "^5.10.2",
+    "sweetalert2": "^11.26.25"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

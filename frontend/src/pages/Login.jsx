@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../common.css";
 import Toast from "../components/Toast";
 import { useAuth } from "../context/AuthContext";
@@ -37,7 +37,10 @@ const Login = () => {
     setLoading(true);
     try {
       await login(email, password, role);
-      setToast({ message: "Login successful! Redirecting...", type: "success" });
+      setToast({
+        message: "Login successful! Redirecting...",
+        type: "success",
+      });
       setTimeout(() => {
         navigate("/home");
       }, 1000);
@@ -113,9 +116,9 @@ const Login = () => {
 
       <main className="to-auth">
         <div className="to-auth-card">
-          <span className="to-session-chip mono">
+          {/* <span className="to-session-chip mono">
             <span className="to-session-dot"></span> Session · Ambitious Cobra
-          </span>
+          </span> */}
 
           <div className="to-auth-title">Sign in to your account</div>
           <div className="to-auth-sub">Enter your credentials to continue.</div>
@@ -198,25 +201,12 @@ const Login = () => {
             </button>
           </form>
 
-          <div style={{ marginTop: "1rem", textAlign: "center", fontSize: "0.85rem", color: "var(--text-mid)" }}>
+          {/* <div style={{ marginTop: "1rem", textAlign: "center", fontSize: "0.85rem", color: "var(--text-mid)" }}>
             Don't have an account?{" "}
             <Link to="/signup" className="to-forgot-link">
               Sign Up
             </Link>
-          </div>
-
-          <button
-            className="to-demo-toggle mono"
-            onClick={() =>
-              setToast({
-                message: "Demo Error: Invalid credentials. Account locked after 5 failed attempts.",
-                type: "error",
-              })
-            }
-            type="button"
-          >
-            TRIGGER DEMO ERROR TOAST
-          </button>
+          </div> */}
         </div>
       </main>
 
