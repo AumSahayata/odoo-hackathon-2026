@@ -33,6 +33,7 @@ const customSelectStyles = {
     overflow: "hidden",
     zIndex: 9999,
   }),
+  menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
   option: (provided, state) => ({
     ...provided,
     backgroundColor: state.isSelected
@@ -211,6 +212,8 @@ const TripAddModal = ({ isModalOpen, setIsModalOpen, onSave }) => {
                     placeholder="Select Vehicle"
                     value={vehicles.find((opt) => opt.value === newTrip.vehicle_id) || null}
                     onChange={(val) => setNewTrip({ ...newTrip, vehicle_id: val.value })}
+                    menuPortalTarget={document.body}
+                    menuPosition="fixed"
                   />
                 </div>
               </div>
@@ -223,6 +226,8 @@ const TripAddModal = ({ isModalOpen, setIsModalOpen, onSave }) => {
                     placeholder="Select Driver"
                     value={drivers.find((opt) => opt.value === newTrip.driver_id) || null}
                     onChange={(val) => setNewTrip({ ...newTrip, driver_id: val.value })}
+                    menuPortalTarget={document.body}
+                    menuPosition="fixed"
                   />
                 </div>
               </div>

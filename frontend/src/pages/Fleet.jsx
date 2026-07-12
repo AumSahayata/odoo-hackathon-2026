@@ -163,6 +163,42 @@ const Fleet = () => {
         onRowDoubleClick={handleRowDoubleClick}
       />
 
+      <div className="to-stats-bar">
+        <div className="to-stats-label">Filter Status</div>
+        <div className="to-stats-row">
+          <button 
+            className={`to-stats-btn ${filter === "All" ? "active" : ""}`}
+            onClick={() => setFilter("All")}
+          >
+            Show All
+          </button>
+          <button 
+            className={`to-stats-btn available ${filter === "AVAILABLE" ? "active" : ""}`}
+            onClick={() => setFilter("AVAILABLE")}
+          >
+            Available
+          </button>
+          <button 
+            className={`to-stats-btn ontrip ${filter === "ON_TRIP" ? "active" : ""}`}
+            onClick={() => setFilter("ON_TRIP")}
+          >
+            On Trip
+          </button>
+          <button 
+            className={`to-stats-btn inshop ${filter === "IN_SHOP" ? "active" : ""}`}
+            onClick={() => setFilter("IN_SHOP")}
+          >
+            In Shop
+          </button>
+          <button 
+            className={`to-stats-btn retired ${filter === "RETIRED" ? "active" : ""}`}
+            onClick={() => setFilter("RETIRED")}
+          >
+            Retired
+          </button>
+        </div>
+      </div>
+
       {toast && (
         <Toast
           message={toast.message}

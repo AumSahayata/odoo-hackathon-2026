@@ -68,8 +68,6 @@ const Drivers = () => {
   const [drivers, setDrivers] = useState([]);
   const [filter, setFilter] = useState("All");
   const [toast, setToast] = useState(null);
-
-  // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingDriver, setEditingDriver] = useState(null);
 

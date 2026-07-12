@@ -105,7 +105,6 @@ const Trips = () => {
       render: (val) => {
         const badgeClass = val ? val.toLowerCase() : "";
         const displayLabel = val ? val.replace("_", " ") : "";
-        // reuse same badge styling concepts
         return (
           <span className={`to-badge ${badgeClass}`}>
             {displayLabel}

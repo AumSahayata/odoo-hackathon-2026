@@ -48,6 +48,7 @@ const customSelectStyles = {
     overflow: "hidden",
     zIndex: 9999,
   }),
+  menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
   option: (provided, state) => ({
     ...provided,
     backgroundColor: state.isSelected
@@ -325,6 +326,8 @@ const DriverAddEditModal = ({ isModalOpen, setIsModalOpen, driverToEdit, onSave 
                     styles={customSelectStyles}
                     value={licenseCategoryOptions.find((opt) => opt.value === newDriver.license_category)}
                     onChange={(val) => setNewDriver({ ...newDriver, license_category: val.value })}
+                    menuPortalTarget={document.body}
+                    menuPosition="fixed"
                   />
                 </div>
               </div>
@@ -406,6 +409,8 @@ const DriverAddEditModal = ({ isModalOpen, setIsModalOpen, driverToEdit, onSave 
                   styles={customSelectStyles}
                   value={statusOptions.find((opt) => opt.value === newDriver.status)}
                   onChange={(val) => setNewDriver({ ...newDriver, status: val.value })}
+                  menuPortalTarget={document.body}
+                  menuPosition="fixed"
                 />
               </div>
             </div>

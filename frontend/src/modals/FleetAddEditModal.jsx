@@ -45,6 +45,7 @@ const customSelectStyles = {
     overflow: "hidden",
     zIndex: 9999,
   }),
+  menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
   option: (provided, state) => ({
     ...provided,
     backgroundColor: state.isSelected
@@ -192,7 +193,7 @@ const FleetAddEditModal = ({
     }
 
     const createdVehicle = {
-      id: vehicleToEdit ? vehicleToEdit.id : Date.now(), // retain original ID if editing
+      id: vehicleToEdit ? vehicleToEdit.id : Date.now(),
       registration_number: regNum,
       model_name: modelName,
       type: newVehicle.type,
@@ -355,6 +356,8 @@ const FleetAddEditModal = ({
                     onChange={(val) =>
                       setNewVehicle({ ...newVehicle, type: val.value })
                     }
+                    menuPortalTarget={document.body}
+                    menuPosition="fixed"
                   />
                 </div>
               </div>
@@ -460,6 +463,8 @@ const FleetAddEditModal = ({
                   onChange={(val) =>
                     setNewVehicle({ ...newVehicle, status: val.value })
                   }
+                  menuPortalTarget={document.body}
+                  menuPosition="fixed"
                 />
               </div>
             </div>
