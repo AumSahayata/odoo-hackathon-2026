@@ -1,8 +1,5 @@
-from datetime import datetime
-import uuid
-from sqlalchemy import Boolean, DateTime, Enum as SQLEnum, String, func
+from sqlalchemy import Boolean, Enum as SQLEnum, String
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from enum import Enum
 from db.base_model import BaseModel
 
