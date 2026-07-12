@@ -1,10 +1,11 @@
 from datetime import date
 from decimal import Decimal
 from enum import Enum
+from models.vehicle import Vehicle
 from db.base_model import BaseModel
 
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import Date, Integer, Numeric, String, Enum as SQLEnum
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import Date, Numeric, String, Enum as SQLEnum
 
 
 class DriverStatus(str, Enum):
@@ -63,3 +64,5 @@ class Driver(BaseModel):
         default=DriverStatus.AVAILABLE,
         nullable=False,
     )
+    
+    trips: Mapped[list["Trip"]] = relationship(back_populates="driver")

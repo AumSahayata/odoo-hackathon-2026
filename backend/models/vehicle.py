@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from db.base_model import BaseModel
 from sqlalchemy import Integer, Numeric, String, Enum as SQLEnum
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from enum import Enum
 
@@ -57,3 +57,4 @@ class Vehicle(BaseModel):
         String(100),
         nullable=False,
     )
+    trips: Mapped[list["Trip"]] = relationship(back_populates="vehicle")
