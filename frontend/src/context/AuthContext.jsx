@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { apiCall } from "../api";
+import { AuthApi } from "../Api.jsx";
 
 const AuthContext = createContext(null);
 
@@ -43,14 +44,11 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password, role) => {
-    const data = await apiCall("/auth/login", "POST", {
-      email,
-      password,
-      role,
-    });
-    if (data && data.token) {
-      localStorage.setItem("token", data.token);
-      const decoded = decodeJWT(data.token);
+    const data = await apiCall(AuthApi.Login, "POST", { email, password, role });
+    const token = data?.access_token || data?.token;
+    if (data && token) {
+      localStorage.setItem("token", token);
+      const decoded = decodeJWT(token);
       setUser(decoded || { email, role });
       return data;
     }
@@ -58,7 +56,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (email, password, role) => {
-    return apiCall("/auth/signup", "POST", { email, password, role });
+    return apiCall(AuthApi.Signup, "POST", { email, password, role });
   };
 
   const logout = () => {

@@ -1,48 +1,130 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import Select from "react-select";
 import "../common.css";
 import Toast from "../components/Toast";
 import { useAuth } from "../context/AuthContext";
 
 const roles = [
-  { name: "Fleet Manager", scope: "Fleet · Maintenance" },
-  { name: "Dispatcher", scope: "Dashboard · Trips" },
-  { name: "Safety Officer", scope: "Drivers · Compliance" },
-  { name: "Financial Analyst", scope: "Fuel & Expenses · Analytics" },
+  {
+    name: "FLEET_MANAGER",
+    scope: "Fleet · Maintenance",
+    label: "Fleet Manager",
+  },
+  { name: "DISPATCHER", scope: "Dashboard · Trips", label: "Dispatcher" },
+  {
+    name: "SAFETY_OFFICER",
+    scope: "Drivers · Compliance",
+    label: "Safety Officer",
+  },
+  {
+    name: "FINANCIAL_ANALYST",
+    scope: "Fuel & Expenses · Analytics",
+    label: "Financial Analyst",
+  },
 ];
+
+const roleOptions = roles.map((r) => ({ value: r.name, label: r.label }));
+
+const customSelectStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    backgroundColor: "rgba(10, 13, 16, 0.6)",
+    borderColor: state.isFocused ? "#F28C0F" : "rgba(255, 255, 255, 0.08)",
+    boxShadow: state.isFocused
+      ? "0 0 0 3px rgba(242, 140, 15, 0.15), 0 0 10px rgba(242, 140, 15, 0.1)"
+      : "none",
+    borderRadius: "8px",
+    padding: "0.08rem 0.1rem",
+    outline: "none",
+    "&:hover": {
+      borderColor: state.isFocused ? "#F28C0F" : "rgba(255, 255, 255, 0.15)",
+    },
+    cursor: "pointer",
+  }),
+  menu: (provided) => ({
+    ...provided,
+    backgroundColor: "#111419",
+    border: "1px solid rgba(255, 255, 255, 0.08)",
+    borderRadius: "8px",
+    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.5)",
+    overflow: "hidden",
+    zIndex: 9999,
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    backgroundColor: state.isSelected
+      ? "#F28C0F"
+      : state.isFocused
+        ? "rgba(255, 255, 255, 0.04)"
+        : "transparent",
+    color: state.isSelected ? "#0E1013" : "#AEB5C2",
+    cursor: "pointer",
+    fontSize: "0.92rem",
+    padding: "0.65rem 0.9rem",
+    "&:active": {
+      backgroundColor: state.isSelected
+        ? "#F28C0F"
+        : "rgba(255, 255, 255, 0.08)",
+    },
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    color: "#F5F7FA",
+    fontSize: "0.92rem",
+  }),
+  input: (provided) => ({
+    ...provided,
+    color: "#F5F7FA",
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    color: "#646C7A",
+  }),
+  dropdownIndicator: (provided, state) => ({
+    ...provided,
+    color: state.isFocused ? "#F28C0F" : "#AEB5C2",
+    "&:hover": {
+      color: "#F5F7FA",
+    },
+  }),
+  indicatorSeparator: () => ({
+    display: "none",
+  }),
+};
 
 const Signup = () => {
   const [showPass, setShowPass] = useState(false);
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [role, setRole] = useState("Dispatcher");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  
+
+  const [signUp, setSignUp] = useState({
+    email: "",
+    password: "",
+    role: "DISPATCHER",
+  });
+
   const { register, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/home", { replace: true });
-    }
-  }, [isAuthenticated, navigate]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password || !confirmPassword) {
+    if (!signUp.email || !signUp.password || !signUp.role) {
       setToast({ message: "Please fill in all fields.", type: "error" });
       return;
     }
-    if (password !== confirmPassword) {
+    if (signUp?.password !== confirmPassword) {
       setToast({ message: "Passwords do not match.", type: "error" });
       return;
     }
     setLoading(true);
     try {
-      await register(email, password, role);
-      setToast({ message: "Account created successfully! Redirecting to login...", type: "success" });
+      await register(signUp?.email, signUp?.password, signUp?.role);
+      setToast({
+        message: "Account created successfully! Redirecting to login...",
+        type: "success",
+      });
       setTimeout(() => {
         navigate("/");
       }, 1500);
@@ -55,6 +137,16 @@ const Signup = () => {
       setLoading(false);
     }
   };
+
+  const handldeInputChange = useCallback((name, value) => {
+    setSignUp((prev) => ({ ...prev, [name]: value }));
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/home", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="to-stage">
@@ -97,15 +189,15 @@ const Signup = () => {
 
         <div className="to-role-block">
           <div className="to-role-eyebrow">Choose your operational role</div>
-          {roles.map((r) => (
+          {roles?.map((r) => (
             <div
-              key={r.name}
-              className={`to-role-item ${role === r.name ? "active" : ""}`}
-              onClick={() => setRole(r.name)}
+              key={r?.name}
+              className={`to-role-item ${signUp.role === r?.name ? "active" : ""}`}
+              onClick={() => handldeInputChange("role", r?.name)}
             >
               <span className="to-role-dot"></span>
-              {r.name}
-              <span className="to-role-scope mono">{r.scope}</span>
+              {r?.label}
+              <span className="to-role-scope mono">{r?.scope}</span>
             </div>
           ))}
         </div>
@@ -134,10 +226,10 @@ const Signup = () => {
                 id="email"
                 type="email"
                 className="to-input"
-                placeholder="raven.k@transitops.in"
+                placeholder="Enter your email"
                 autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={signUp.email}
+                onChange={(e) => handldeInputChange("email", e.target.value)}
                 disabled={loading}
               />
             </div>
@@ -153,8 +245,10 @@ const Signup = () => {
                   className="to-input"
                   placeholder="••••••••"
                   autoComplete="new-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={signUp.password}
+                  onChange={(e) =>
+                    handldeInputChange("password", e.target.value)
+                  }
                   disabled={loading}
                 />
                 <button
@@ -187,27 +281,37 @@ const Signup = () => {
               <label className="to-field-label" htmlFor="role">
                 Role (RBAC)
               </label>
-              <select
+              <Select
                 id="role"
-                className="to-select"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                disabled={loading}
-              >
-                {roles.map((r) => (
-                  <option key={r.name} value={r.name}>
-                    {r.name}
-                  </option>
-                ))}
-              </select>
+                options={roleOptions}
+                value={roleOptions.find((o) => o.value === signUp.role)}
+                onChange={(option) =>
+                  handldeInputChange("role", option ? option?.value : "")
+                }
+                isDisabled={loading}
+                styles={customSelectStyles}
+                isSearchable={false}
+              />
             </div>
 
-            <button type="submit" className="to-signin-btn" style={{ marginTop: "0.25rem" }} disabled={loading}>
+            <button
+              type="submit"
+              className="to-signin-btn"
+              style={{ marginTop: "0.25rem" }}
+              disabled={loading}
+            >
               {loading ? "Registering..." : "Sign Up"}
             </button>
           </form>
 
-          <div style={{ marginTop: "1rem", textAlign: "center", fontSize: "0.85rem", color: "var(--text-mid)" }}>
+          <div
+            style={{
+              marginTop: "1rem",
+              textAlign: "center",
+              fontSize: "0.85rem",
+              color: "var(--text-mid)",
+            }}
+          >
             Already have an account?{" "}
             <Link to="/" className="to-forgot-link">
               Sign In
