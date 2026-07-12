@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect } from "react";
 import { apiCall } from "../api";
 
@@ -58,6 +57,10 @@ export const AuthProvider = ({ children }) => {
     throw new Error("Invalid response from auth server.");
   };
 
+  const register = async (email, password, role) => {
+    return apiCall("/auth/signup", "POST", { email, password, role });
+  };
+
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
@@ -67,7 +70,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, logout, isAuthenticated }}
+      value={{ user, loading, login, register, logout, isAuthenticated }}
     >
       {children}
     </AuthContext.Provider>
